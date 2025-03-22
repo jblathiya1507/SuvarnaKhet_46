@@ -1,4 +1,5 @@
 CREATE TABLE UsersFarmers(
+    uf_role_id INTEGER REFERENCES RoleMaster(role_id),
     uf_id SERIAL PRIMARY KEY,
     uf_name VARCHAR(255),
     uf_email VARCHAR(255),

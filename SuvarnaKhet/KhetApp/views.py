@@ -15,8 +15,25 @@ from django.db import connection
 from twilio.rest import Client
 import requests
 import json
+from .utils import *
+from pathlib import Path
 
-# Create your views here.
+# Global variables
+upload_files = ["SuvarnaKhet.docx"]
+
+knowledge_base_path = f"{Path(settings.FILE_BASE_PATH).as_posix()}/documents/"
+print(knowledge_base_path)
+
+knowledge_list = []
+
+for upload_file in upload_files:
+    knowledge_path = f"{knowledge_base_path}{upload_file}"
+    knowledge = load_knowledge(knowledge_path)
+    knowledge_list.append(knowledge)
+    
+print(knowledge_list)
+
+
 glob_url = "http://127.0.0.1:8000"
 registration_otps = {}
 
@@ -127,4 +144,12 @@ def verify_otp(request):
         return JsonResponse({"success":True,"msg":"Login Successfully."})
     else:
         return JsonResponse({"success":False,"msg":"OTP does not match..!"})
+
+@csrf_exempt
+def send_chatboat_response(request):
+    user_text = request.GET.get("user_text")
+    
+    ai_response = get_ai_response(knowledge_list, user_text)
+    
+    return JsonResponse({"success":True,"ai_text":ai_response})
 

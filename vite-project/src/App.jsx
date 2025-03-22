@@ -1,0 +1,28 @@
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout/Layout";
+import HomePage from "./components/HomePage/HomePage";
+import ShopPage from "./components/ShopPage/ShopPage";
+import ProductDetails from "./components/ProductDetailsPage/ProductDetails";
+import "./app.css"; 
+import Signup from "./components/UserAuth/SignUp";
+import  Login  from "./components/UserAuth/Login";
+// import ContactPage from "./components/ContactPage/ContactPage"; // Ensure this file exists
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Layout />}>
+          <Route index element={<HomePage />} />
+          <Route path="/shop" element={<ShopPage />} />
+          <Route path="/product" element={<ProductDetails />} />
+          {/* <Route path="contact" element={<ContactPage />} /> */}
+        </Route>
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
