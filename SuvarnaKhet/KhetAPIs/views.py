@@ -895,7 +895,7 @@ def orders_get(request):
     filters = request.query_params.dict()
 
     query = """
-        SELECT cart_id, p_id, uf_id, order_id, payment_id, payment_amount, payment_type, status
+        SELECT cart_id, p_id, uf_id, payment_id, payment_amount, payment_type, status, order_id, create_datetime
         FROM Orders 
     """
 
@@ -916,6 +916,8 @@ def orders_get(request):
             "payment_amount": row[4],
             "payment_type": row[5],
             "status": row[6],
+            "order_id": row[7],
+            "create_datetime": row[8]
         }
         for row in rows
     ]
@@ -1111,7 +1113,7 @@ def sell_request_get(request):
     filters = request.query_params.dict()
 
     query = """
-        SELECT uf_id, p_id, mt_id, request_id, p_price, bid_price, p_qty, status,uf_id, p_id, mt_id, request_id
+        SELECT uf_id, p_id, mt_id, request_id, p_price, bid_price, p_qty, status
         FROM SellRequest
     """
 
@@ -1126,10 +1128,10 @@ def sell_request_get(request):
 
     data = [
         {   
-            "p_price": row[0],
-            "bid_price": row[1],
-            "p_qty": row[2],
-            "status": row[3],
+            "uf_id": row[0],
+            "p_id": row[1],
+            "mt_id": row[2],
+            "request_id": row[3],
             "p_price": row[4],
             "bid_price": row[5],
             "p_qty": row[6],
@@ -1142,20 +1144,23 @@ def sell_request_get(request):
 
 @api_view(['POST'])
 def sell_request_post(request):
-    serializer = UsersFarmers(data=request.data)
+    serializer = SellRequest(data=request.data)
     if serializer.is_valid():
         data = serializer.validated_data
         
         query = """
-            INSERT INTO SellRequest (p_price, bid_price, p_qty, status, create_datetime)
-            VALUES (%s, %s, %s, %s, %s) RETURNING request_id
+            INSERT INTO SellRequest (uf_id, p_id, p_price, p_qty, bid_price, mt_id, status, create_datetime)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING request_id
         """
 
         with connection.cursor() as cursor:
             cursor.execute(query, [
+                data['uf_id'],
+                data['p_id'],
                 data['p_price'],
-                data['bid_price'],
                 data['p_qty'],
+                data['bid_price'],
+                data['mt_id'],
                 data['status'],
                 data['create_datetime'], 
             ])

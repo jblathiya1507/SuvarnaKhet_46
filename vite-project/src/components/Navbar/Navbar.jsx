@@ -34,6 +34,11 @@ export default function Navbar() {
     handleMenuClose();
   };
 
+  const handleHistoryClick = () => {
+    navigate("/history");
+    handleMenuClose();
+  };
+
   const handleLoginClick = () => {
     localStorage.removeItem("uf_id");
     navigate("/login");
@@ -92,14 +97,19 @@ export default function Navbar() {
             <MoreVert />
           </IconButton>
 
+          {uf_id !== null && (
+            <>
           {/* Dropdown Menu */}
           <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+          
             <MenuItem onClick={handleProfileClick}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Order History</MenuItem>
-            {uf_id !== null && (
+            <MenuItem onClick={handleHistoryClick}>Order History</MenuItem>
             <MenuItem onClick={handleLoginClick}>Logout</MenuItem>
-            )}
+            
+            
           </Menu>
+          </>
+        )}
         </Box>
       </Toolbar>
     </AppBar>
