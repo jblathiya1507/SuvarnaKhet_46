@@ -1,85 +1,101 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Container,
   Grid,
   Card,
   CardContent,
   Typography,
-  MenuItem,
-  FormControl,
-  Select,
-  Box,
+  Avatar,
+  Chip,
+  Stack,
 } from "@mui/material";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import PersonIcon from "@mui/icons-material/Person";
+import InfoIcon from "@mui/icons-material/Info";
 
-const stores = [
+const farmers = [
   {
     id: 1,
-    name: "Shop Name",
-    farmer: "Om Patel",
-    price: "₹100",
+    name: "Om Patel",
     address: "A-5/86, ABC Nagar, Nr XYZ Road, Surat, Bhavnagar",
+    description:
+      "Experienced organic farmer specializing in fresh vegetables and fruits.",
+    image: "https://source.unsplash.com/200x200/?man,portrait",
   },
   {
     id: 2,
-    name: "Shop Name",
-    farmer: "Om Patel",
-    price: "₹100",
-    address: "A-5/86, ABC Nagar, Nr XYZ Road, Surat, Bhavnagar",
+    name: "Ravi Mehta",
+    address: "B-10, Green Valley, Ahmedabad, Gujarat",
+    description:
+      "Expert in sustainable farming techniques with over 15 years of experience.",
+    image: "https://source.unsplash.com/200x200/?person,smile",
   },
 ];
 
 export default function ShopPage() {
-  const [location, setLocation] = useState("");
-
   return (
     <Container sx={{ py: 5, textAlign: "center" }}>
       <Typography variant="h5" fontWeight="bold" sx={{ mb: 3 }}>
-        <span style={{ color: "#88b04b" }}>Our Best</span> Shop
+        <span style={{ color: "#88b04b" }}>Meet Our</span> Farmers
       </Typography>
 
-      <FormControl sx={{ mb: 4, minWidth: 200 }}>
-        <Select
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          displayEmpty
-          sx={{ backgroundColor: "#f7e6b5", borderRadius: "10px" }}
-        >
-          <MenuItem value="">Select Location</MenuItem>
-          <MenuItem value="Surat">Surat</MenuItem>
-          <MenuItem value="Ahmedabad">Ahmedabad</MenuItem>
-          <MenuItem value="Mumbai">Mumbai</MenuItem>
-        </Select>
-      </FormControl>
-
       <Grid container spacing={3} justifyContent="center">
-        {stores.map((store) => (
-          <Grid item key={store.id} xs={12} sm={6} md={4}>
+        {farmers.map((farmer) => (
+          <Grid item key={farmer.id} xs={12} sm={6} md={4}>
             <Card
               sx={{
                 textAlign: "center",
-                backgroundColor: "#faf3dd",
-                p: 2,
                 borderRadius: "15px",
+                boxShadow: "0 4px 15px rgba(0, 0, 0, 0.2)",
+                transition: "transform 0.3s ease",
+                "&:hover": { transform: "scale(1.05)" },
+                p: 3,
               }}
             >
+              <Avatar
+                src={farmer.image}
+                alt={farmer.name}
+                sx={{
+                  width: 100,
+                  height: 100,
+                  margin: "auto",
+                  border: "3px solid #88b04b",
+                }}
+              />
               <CardContent>
-                <img src="/ShopIcon.png" alt="Shop" width="50" height="50" />
-                <Typography variant="h6" fontWeight="bold">
-                  {store.name}
-                </Typography>
-                <Typography variant="body2">Farmer Name</Typography>
-                <Typography variant="body1" fontWeight="bold">
-                  {store.farmer}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "#88b04b", fontWeight: "bold" }}
-                >
-                  {store.price}
-                </Typography>
-                <Typography variant="body2" sx={{ mt: 1 }}>
-                  {store.address}
-                </Typography>
+                {/* User Name Tag */}
+                <Stack direction="row" justifyContent="left" spacing={1} sx={{ mt: 2 }}>
+                  <Chip
+                    icon={<PersonIcon />}
+                    label={farmer.name}
+                    sx={{ backgroundColor: "#d1f5c4", fontWeight: "bold" }}
+                  />
+                </Stack>
+
+                {/* Location Tag */}
+                <Stack direction="row" justifyContent="left" spacing={1} sx={{ mt: 1 }}>
+                  <Chip
+                    icon={<LocationOnIcon />}
+                    label={farmer.address}
+                    sx={{ backgroundColor: "#d1f5c4", fontWeight: "bold" }}
+                  />
+                </Stack>
+
+                {/* Description Tag */}
+                <Stack direction="row" justifyContent="left" spacing={1} sx={{ mt: 1 }}>
+                  <Chip
+                    icon={<InfoIcon />}
+                    label={farmer.description}
+                    sx={{
+                      backgroundColor: "#d1f5c4",
+                      fontWeight: "bold",
+                      maxWidth: "80%",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  />
+                </Stack>
               </CardContent>
             </Card>
           </Grid>

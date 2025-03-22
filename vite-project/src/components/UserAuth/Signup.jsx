@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Card,
   TextField,
@@ -12,17 +13,17 @@ import {
   InputAdornment,
 } from "@mui/material";
 import { Person, Phone, CalendarToday, Lock } from "@mui/icons-material";
+import Swal from "sweetalert2";
+import axios from 'axios';
 
 const Signup = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: "",
     mobile: "",
     gender: "",
     dob: "",
-    otp: "",
   });
-
-  const [otpSent, setOtpSent] = useState(false); // State to show OTP input
 
   // Handle input change
   const handleChange = (e) => {
@@ -30,18 +31,38 @@ const Signup = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  // Handle OTP send
-  const handleSendOtp = () => {
-    if (formData.mobile.length === 10) {
-      setOtpSent(true);
-      console.log("OTP Sent to:", formData.mobile);
-    } else {
-      alert("Enter a valid mobile number.");
-    }
-  };
-
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+
+    if(formData.fullName && formData.mobile && formData.mobile && formData.gender && formData.dob){
+      const response = await axios.get(`http://127.0.0.1:8000/registration_py`, {params:{name:formData.fullName,mobile:formData.mobile,gender:formData.gender,dob:formData.dob}});
+      if (response.data.success) {
+        Swal.fire({
+          title: "Registration Successful!",
+          text: response.data.msg,
+          icon: "success",
+          confirmButtonColor: "#6A0DAD",
+        }).then(() => {
+          navigate("/login");
+        });
+      }else{
+        Swal.fire({
+          title: "Error",
+          text: response.data.msg,
+          icon: "error",
+          confirmButtonColor: "#FF4500",
+        }).then(() => {
+          window.location.reload();
+        });
+      }
+    }else{
+      Swal.fire({
+        title: "Error",
+        text: "Required all fields..!",
+        icon: "error",
+        confirmButtonColor: "#FF4500",
+      });
+    }
     e.preventDefault();
     console.log("Form Data:", formData);
   };
@@ -51,7 +72,7 @@ const Signup = () => {
       display="flex"
       justifyContent="center"
       alignItems="center"
-      height="100vh"
+      height="90vh"
       sx={{ backgroundColor: "#A4C96F" }}
     >
       <Card
@@ -78,7 +99,7 @@ const Signup = () => {
             Sign up
           </Typography>
 
-          <form onSubmit={handleSubmit}>
+          <form>
             {/* Full Name */}
             <TextField
               fullWidth
@@ -159,60 +180,20 @@ const Signup = () => {
               sx={{ backgroundColor: "#f8f8e7", borderRadius: 1 }}
               InputLabelProps={{ shrink: true }}
             />
-            {/* Send OTP Button */}
-            {!otpSent ? (
-              <Button
-                fullWidth
-                variant="contained"
-                sx={{
-                  mt: 2,
-                  backgroundColor: "#A4C96F",
-                  color: "#316731",
-                  fontWeight: "bold",
-                  "&:hover": { backgroundColor: "#8eb45a" },
-                }}
-                onClick={handleSendOtp}
-              >
-                Send OTP
-              </Button>
-            ) : (
-              <>
-                {/* OTP Input Field */}
-                <TextField
-                  fullWidth
-                  label="Enter OTP"
-                  name="otp"
-                  value={formData.otp}
-                  onChange={handleChange}
-                  variant="outlined"
-                  margin="normal"
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Lock />
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{ backgroundColor: "#f8f8e7", borderRadius: 1 }}
-                />
-
-                {/* Submit Button */}
-                <Button
-                  fullWidth
-                  type="submit"
-                  variant="contained"
-                  sx={{
-                    mt: 2,
-                    backgroundColor: "#A4C96F",
-                    color: "#316731",
-                    fontWeight: "bold",
-                    "&:hover": { backgroundColor: "#8eb45a" },
-                  }}
-                >
-                  Submit
-                </Button>
-              </>
-            )}
+            <Button
+              fullWidth
+              onClick={handleSubmit}
+              variant="contained"
+              sx={{
+                mt: 2,
+                backgroundColor: "#A4C96F",
+                color: "#316731",
+                fontWeight: "bold",
+                "&:hover": { backgroundColor: "#8eb45a" },
+              }}
+            >
+              Register
+            </Button>
 
             {/* Login Link */}
             <Typography textAlign="center" mt={2} color="white">

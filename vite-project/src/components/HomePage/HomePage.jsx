@@ -1,8 +1,24 @@
 import React from "react";
 import { Box, Typography, Button } from "@mui/material";
 import LatestProducts from "./LatestProducts";
+import axios from "axios";
+import Swal from "sweetalert2";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function HomePage() {
+  const navigate = useNavigate();
+  // localStorage.removeItem("uf_id");
+  // const navigate = useNavigate();
+  // const uf_id = localStorage.getItem("uf_id");
+  // console.log("uf_id",uf_id);
+  // if (uf_id == null){
+
+  // }
+
+  const handleNavigate = () => {
+    navigate('/product');
+  };
+
   return (
     <>
     <Box
@@ -46,6 +62,7 @@ export default function HomePage() {
         </Typography>
         <Button
           variant="contained"
+          onClick={handleNavigate}
           sx={{
             backgroundColor: "#99cc33",
             color: "#fff",

@@ -1,5 +1,4 @@
 CREATE TABLE UsersFarmers(
-    uf_role_id INTEGER REFERENCES RoleMaster(role_id),
     uf_id SERIAL PRIMARY KEY,
     uf_name VARCHAR(255),
     uf_email VARCHAR(255),
@@ -33,6 +32,15 @@ CREATE TABLE RoleMaster(
     status INTEGER,
     create_datetime TIMESTAMP
 );
+
+insert into RoleMaster(role_name,status,create_datetime) values('Super Admin', 1, now());
+insert into RoleMaster(role_name,status,create_datetime) values('Admin', 1, now());
+insert into RoleMaster(role_name,status,create_datetime) values('Farmer', 1, now());
+insert into RoleMaster(role_name,status,create_datetime) values('Customer', 1, now());
+insert into RoleMaster(role_name,status,create_datetime) values('Delivery Partner', 1, now());
+insert into RoleMaster(role_name,status,create_datetime) values('Warehouse Manager', 1, now());
+
+
 
 CREATE TABLE ManagementTeam(
     role_id INTEGER REFERENCES RoleMaster(role_id),
@@ -71,6 +79,12 @@ CREATE TABLE Category(
     create_datetime TIMESTAMP
 );
 
+insert into Category(c_name,status,create_datetime) values('Vegetables', 1, now());
+insert into Category(c_name,status,create_datetime) values('Fruits', 1, now());
+insert into Category(c_name,status,create_datetime) values('Grains', 1, now());
+
+
+
 CREATE TABLE Products(
     c_id INTEGER REFERENCES Category(c_id),
     p_id SERIAL PRIMARY KEY,
@@ -83,10 +97,27 @@ CREATE TABLE Products(
     create_datetime TIMESTAMP
 );
 
+insert into Products(c_id,p_name,p_image,p_price,p_qty,p_description,status,create_datetime) values(1,'Tomatoes', 'Tomatoes.jpg','35','1kg','Fresh tomatoes',1,now());
+insert into Products(c_id,p_name,p_image,p_price,p_qty,p_description,status,create_datetime) values(1,'Potatoes', 'Potatoes.jpg','35','1kg','Fresh Potatoes',1,now());
+insert into Products(c_id,p_name,p_image,p_price,p_qty,p_description,status,create_datetime) values(2,'Apples', 'Apples.jpg','35','1kg','Fresh Apples',1,now());
+insert into Products(c_id,p_name,p_image,p_price,p_qty,p_description,status,create_datetime) values(2,'Mangoes', 'Mangoes.jpg','35','1kg','Fresh Mangoes',1,now());
+insert into Products(c_id,p_name,p_image,p_price,p_qty,p_description,status,create_datetime) values(3,'Wheat', 'Wheat.jpg','500','20kg','Natural Farming Product',1,now());
+insert into Products(c_id,p_name,p_image,p_price,p_qty,p_description,status,create_datetime) values(3,'Bajra', 'Bajra.jpg','500','20kg','Natural Farming Product',1,now());
+insert into Products(c_id,p_name,p_image,p_price,p_qty,p_description,status,create_datetime) values(1,'Spinach', 'Spinach.jpg','35','1kg','Fresh Spinach',1,now());
+insert into Products(c_id,p_name,p_image,p_price,p_qty,p_description,status,create_datetime) values(1,'Methi', 'Methi.jpg','35','1kg','Fresh Methi',1,now());
+insert into Products(c_id,p_name,p_image,p_price,p_qty,p_description,status,create_datetime) values(2,'Bananas', 'Bananas.jpg','35','1kg','Fresh Bananas',1,now());
+insert into Products(c_id,p_name,p_image,p_price,p_qty,p_description,status,create_datetime) values(2,'Pomogranate', 'Pomogranate.jpg','35','1kg','Fresh Pomogranate',1,now());
+insert into Products(c_id,p_name,p_image,p_price,p_qty,p_description,status,create_datetime) values(3,'Chana', 'Chana.jpg','500','20kg','Natural Farming Product',1,now());
+insert into Products(c_id,p_name,p_image,p_price,p_qty,p_description,status,create_datetime) values(3,'Bajra', 'Wheat.jpg','500','20kg','Natural Farming Product',1,now());
+
+
+
+
 CREATE TABLE Cart(
     uf_id INTEGER REFERENCES UsersFarmers(uf_id),
     p_id INTEGER REFERENCES Products(p_id),
     cart_id SERIAL PRIMARY KEY,
+    qty INTEGER,
     status INTEGER,
     create_datetime TIMESTAMP
 );
@@ -125,3 +156,29 @@ CREATE TABLE SellRequest(
     status INTEGER,
     create_datetime TIMESTAMP
 );
+
+
+CREATE TABLE MenuMaster(
+    menu_id SERIAL PRIMARY KEY,
+    role_id INTEGER REFERENCES RoleMaster(role_id),
+    menu_name VARCHAR(255),
+    menu_link VARCHAR(255),
+    status INTEGER,
+    create_datetime TIMESTAMP
+);
+
+insert into MenuMaster(role_id,menu_name,menu_link,status,create_datetime)values(1,'Manage Admin','/manage_admin',1,now());
+insert into MenuMaster(role_id,menu_name,menu_link,status,create_datetime)values(1,'Manage Farmer','/manage_farmer',1,now());
+insert into MenuMaster(role_id,menu_name,menu_link,status,create_datetime)values(1,'Manage Customer','/manage_customer',1,now());
+insert into MenuMaster(role_id,menu_name,menu_link,status,create_datetime)values(1,'Manage Delivery Partner','/manage_delivery_partner',1,now());
+insert into MenuMaster(role_id,menu_name,menu_link,status,create_datetime)values(1,'Manage Warehouse Manager','/manage_warehouse_manager',1,now());
+insert into MenuMaster(role_id,menu_name,menu_link,status,create_datetime)values(2,'Manage Sell Request','/manage_sale_request',1,now());
+insert into MenuMaster(role_id,menu_name,menu_link,status,create_datetime)values(2,'Farmer Profile Approval','/Farmer_Profile_Approval',1,now());
+insert into MenuMaster(role_id,menu_name,menu_link,status,create_datetime)values(2,'Delivery Partner Profile Approval','/delivery_partner_profile_aproval',1,now());
+insert into MenuMaster(role_id,menu_name,menu_link,status,create_datetime)values(3,'Sell Request','/sale_request',1,now());
+insert into MenuMaster(role_id,menu_name,menu_link,status,create_datetime)values(3,'Manage Selling','/manage_salling',1,now());
+insert into MenuMaster(role_id,menu_name,menu_link,status,create_datetime)values(5,'Manage Order','/manage_order',1,now());
+insert into MenuMaster(role_id,menu_name,menu_link,status,create_datetime)values(5,'Manage Payment','/manage_payment',1,now());
+insert into MenuMaster(role_id,menu_name,menu_link,status,create_datetime)values(6,'View Inventory','/view_inventory',1,now());
+insert into MenuMaster(role_id,menu_name,menu_link,status,create_datetime)values(6,'Receive Order','/receive_order',1,now());
+

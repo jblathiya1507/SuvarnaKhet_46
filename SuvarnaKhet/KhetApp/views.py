@@ -44,28 +44,48 @@ def index(request):
     
 @csrf_exempt
 def registration(request):
-    name = request.GET.get("name")
+    name = request.GET.get("name") 
     mobile = request.GET.get("mobile")
     gender = request.GET.get("gender")
     dob = request.GET.get("dob")
     
+    print(f"name: {name}, mobile: {mobile}, gender: {gender}, dob: {dob}")
+    
     if name and mobile and gender and dob:
+        response = requests.get(f"{glob_url}/api/users_farmers_get/",{"uf_mobile":mobile})
+        if response.status_code == 200:
+            user_data = response.json()
+            print(user_data)
+            
+        if user_data != []:
+            return JsonResponse({"success":False,"msg":"Mobile number already registered..!"})
+        
         # Insert data in table by calling API
         register_payload = {
-            'uf_name' : name,
-            'uf_email' : "",
-            'uf_mobile' : mobile,
-            'uf_gender' : gender,
-            'uf_dob' : dob,
-            'uf_address' : "",
-            'uf_city' : "",
-            'uf_state' : "",
-            'uf_pincode' : "",
-            'status' : "",
-            'create_datetime' : datetime.now().isoformat()
+            'uf_role_id': 4,
+            'uf_name': name,
+            'uf_email': "N/A",
+            'uf_mobile': mobile,
+            'uf_gender': gender,
+            'uf_dob': dob,
+            'uf_address': "N/A",
+            'uf_city': "N/A",
+            'uf_state': "N/A",
+            'uf_pincode': "000000",
+            'status': 1,
+            'create_datetime': datetime.now().isoformat()
         }
-        register_response = requests.post(f"{glob_url}/api/users_farmers_post/", data=json.dumps(register_payload), headers={'Content-Type': 'application/json'})        
-        print(register_response.json())
+
+        # Make POST request using `json` parameter
+        register_response = requests.post(
+            f"{glob_url}/api/users_farmers_post/", 
+            json=register_payload,
+            headers={'Content-Type': 'application/json'}
+        )
+
+        # Check the response
+        print(f"Status Code: {register_response.status_code}")
+        print(f"Response Body: {register_response.json()}")
         
         # Send registration msg
         message_body = f"""Thank you for registration.
@@ -75,15 +95,18 @@ Welcome {name} at SuvarnaKhet.
 Thank You
 SuvarnaKhet Team"""
 
-        from twilio.rest import Client
-        account_sid = 'AC4b5cf27c79c19ccc9423ceed511e7eec'
-        auth_token = 'cceaa46548dee51abd88c931f222338d'
-        client = Client(account_sid, auth_token)
-        message = client.messages.create(
-            body = message_body,
-            to=f'+91{mobile}'
-        )
-        print(message.sid)
+        try:
+            account_sid = 'AC4b5cf27c79c19ccc9423ceed511e7eec'
+            auth_token = 'b6e5bf9c5ecf64cdf84174b3ce314e63'
+            client = Client(account_sid, auth_token)
+            message = client.messages.create(
+                body = message_body,
+                from_ = '+18482742758',
+                to=f'+91{mobile}'
+            )
+            print(message.sid)
+        except:
+            return JsonResponse({"success":True,"msg":"You Are Registered Successfully."})
         
         return JsonResponse({"success":True,"msg":"You Are Registered Successfully."})
     else:
@@ -114,15 +137,17 @@ def send_otp(request):
 Thank You
 SuvarnaKhet Team"""
             try:
-                from twilio.rest import Client
                 account_sid = 'AC4b5cf27c79c19ccc9423ceed511e7eec'
-                auth_token = 'cceaa46548dee51abd88c931f222338d'
+                auth_token = 'b6e5bf9c5ecf64cdf84174b3ce314e63'
                 client = Client(account_sid, auth_token)
                 message = client.messages.create(
                     body = message_body,
+                    from_ = '+18482742758',
                     to=f'+91{mobile}'
                 )
                 print(message.sid)
+                
+                return JsonResponse({"success":True,"msg":"OTP Sent Successfully."})
             except Exception as e:
                 return JsonResponse({"success":False,"msg":"We not able to send OTP now, Please try again after sometime..!"})
         else:
@@ -133,16 +158,23 @@ SuvarnaKhet Team"""
 @csrf_exempt
 def verify_otp(request):
     global registration_otps
-    # data = json.loads(request.body)
     mobile = request.GET.get("mobile")
     otp = request.GET.get("otp")
     
     print(f"mobile: {mobile}, OTP: {otp}")
     print(f"Glob OTP: {registration_otps}, {registration_otps[mobile]}")
     
+    response = requests.get(f"{glob_url}/api/users_farmers_get/",{"uf_mobile":mobile})
+    if response.status_code == 200:
+        usr_fm_data = response.json()
+        
+    print(usr_fm_data)
+    
     if registration_otps[mobile] == int(otp):
-        return JsonResponse({"success":True,"msg":"Login Successfully."})
+        print("if")
+        return JsonResponse({"success":True,"msg":"Login Successfully.","user":usr_fm_data[0]})
     else:
+        print("else")
         return JsonResponse({"success":False,"msg":"OTP does not match..!"})
 
 @csrf_exempt
@@ -153,3 +185,45 @@ def send_chatboat_response(request):
     
     return JsonResponse({"success":True,"ai_text":ai_response})
 
+# @csrf_exempt
+# def approve_sell_request(request):
+     
+     
+@csrf_exempt
+def add_to_cart(request):
+    uf_id = request.GET.get("uf_id")
+    p_id = request.GET.get("p_id")
+    quantity = request.GET.get("quantity")
+    
+    response = requests.get(f"{glob_url}/api/cart_get/",{"uf_id":uf_id,"p_id":p_id,"status":1})
+    if response.status_code == 200:
+        cart_data = response.json()
+    print(cart_data)
+    
+    if cart_data == []:
+        cart_payload = {
+            'uf_id': uf_id,
+            'p_id': p_id,
+            'qty': 1,
+            'status': 1,
+            'create_datetime': datetime.now().isoformat()
+        }
+
+        # Make POST request using `json` parameter
+        register_response = requests.post(
+            f"{glob_url}/api/cart_post/", 
+            json=cart_payload,
+            headers={'Content-Type': 'application/json'}
+        )
+        
+        if register_response.status_code == 201:
+            return JsonResponse({"success":True,"msg":"Add to cart successfully!"})
+        else:
+            return JsonResponse({"success":False,"msg":"Not able to add into cart! Try again later!"})
+    else:
+        qty = int(cart_data[0].qty) + int(quantity)
+        
+        response = requests.get(f"{glob_url}/api/cart_update/?uf_id={uf_id}&p_id={p_id}&status=1",{"qty":qty})
+        print(f"Update:{response}")
+        
+        return JsonResponse({"success":True,"msg":"Add to cart successfully!"})

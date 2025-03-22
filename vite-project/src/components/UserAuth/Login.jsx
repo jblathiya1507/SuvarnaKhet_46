@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Card,
   TextField,
@@ -9,13 +10,16 @@ import {
   InputAdornment,
 } from "@mui/material";
 import { Phone, Lock } from "@mui/icons-material";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     mobile: "",
     otp: "",
   });
-  const [otpSent, setOtpSent] = useState(false); // State to track OTP sent status
+  const [otpSent, setOtpSent] = useState(false);
 
   // Handle input changes
   const handleChange = (e) => {
@@ -23,17 +27,55 @@ const Login = () => {
   };
 
   // Handle OTP Send
-  const handleSendOtp = () => {
+  const handleSendOtp = async () => {
     if (formData.mobile) {
+      const response = await axios.get(`http://127.0.0.1:8000/send_otp_py`, {params:{mobile:formData.mobile}});
+      if (response.data.success) {
+        Swal.fire({
+          title: "OTP Sent!",
+          text: response.data.msg,
+          icon: "success",
+          confirmButtonColor: "#6A0DAD",
+        });
+      }
+      else{
+        Swal.fire({
+          title: "Error",
+          text: response.data.msg,
+          icon: "error",
+          confirmButtonColor: "#FF4500",
+        });
+      }
       setOtpSent(true);
       console.log("OTP Sent to:", formData.mobile);
     }
   };
 
   // Handle Verify OTP
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Login Data:", formData);
+  const handleSubmit = async (e) => {
+    const response = await axios.get(`http://127.0.0.1:8000/verify_otp_py`, {params:{mobile:formData.mobile,otp:formData.otp}});
+    console.log(response.data);
+    if (response.data.success) {
+      Swal.fire({
+        title: "Login!",
+        text: response.data.msg,
+        icon: "success",
+        confirmButtonColor: "#6A0DAD",
+      }).then(()=>{
+        console.log(response.data.user.uf_id);
+        console.log(response.data.user);
+        localStorage.setItem("uf_id", response.data.user.uf_id);
+        navigate("/");
+      })
+      console.log(response.data);
+    }else{
+      Swal.fire({
+        title: "Error",
+        text: response.data.msg,
+        icon: "error",
+        confirmButtonColor: "#FF4500",
+      });
+    }
   };
 
   return (
@@ -41,10 +83,10 @@ const Login = () => {
       display="flex"
       justifyContent="center"
       alignItems="center"
-      height="100vh"
+      height="90vh"
       sx={{
         backgroundColor: "#7BAE4C",
-        padding: "20px",
+        // padding: "10px",
       }}
     >
       {/* Rounded Box with Image */}
@@ -54,7 +96,7 @@ const Login = () => {
         alignItems="center"
         width="90%"
         maxWidth="900px"
-        height="90vh"
+        height="70vh"
         sx={{
           backgroundImage: `url(/service-1.jpg)`,
           backgroundSize: "cover",
@@ -85,7 +127,7 @@ const Login = () => {
             Sign In
           </Typography>
 
-          <form onSubmit={handleSubmit}>
+          <form>
             {/* Mobile Number */}
             <TextField
               fullWidth
@@ -178,7 +220,7 @@ const Login = () => {
                 {/* Verify Button */}
                 <Button
                   fullWidth
-                  type="submit"
+                  onClick={handleSubmit}
                   variant="contained"
                   sx={{
                     mt: 2,
