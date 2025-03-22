@@ -826,7 +826,7 @@ def cart_post(request):
       
         query = """
             INSERT INTO Cart (uf_id, p_id, qty, status, create_datetime)
-            VALUES (%s, %s, %s, %s) RETURNING cart_id
+            VALUES (%s, %s, %s, %s, %s) RETURNING cart_id
         """
 
         with connection.cursor() as cursor:
@@ -929,12 +929,16 @@ def orders_post(request):
         data = serializer.validated_data
         
         query = """
-            INSERT INTO Orders (payment_amount, payment_type, status, create_datetime)
-            VALUES (%s, %s, %s, %s) RETURNING order_id
+            INSERT INTO Orders (cart_id, p_id, uf_id, payment_id, payment_amount, payment_type, status, create_datetime)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING order_id
         """
 
         with connection.cursor() as cursor:
             cursor.execute(query, [
+                data['cart_id'],
+                data['p_id'],
+                data['uf_id'],
+                data['payment_id'],
                 data['payment_amount'],
                 data['payment_type'],
                 data['status'],
@@ -944,7 +948,7 @@ def orders_post(request):
             order_id = cursor.fetchone()
 
         return Response({"message": "Record inserted successfully","order_id":order_id[0]}, status=201)
-
+    print(serializer.errors)
     return Response(serializer.errors, status=400)
 
 @api_view(['PUT'])
@@ -1034,12 +1038,14 @@ def delivery_post(request):
         data = serializer.validated_data
         
         query = """
-            INSERT INTO Delivery (pick_address, delivery_address, verification_qr, create_datetime)
-            VALUES (%s, %s, %s, %s) RETURNING delivery_id
+            INSERT INTO Delivery (mt_id, order_id, pick_address, delivery_address, verification_qr, status, create_datetime)
+            VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING delivery_id
         """
 
         with connection.cursor() as cursor:
             cursor.execute(query, [
+                data['mt_id'],
+                data['order_id'],
                 data['pick_address'],
                 data['delivery_address'],
                 data['verification_qr'],
@@ -1051,6 +1057,7 @@ def delivery_post(request):
 
         return Response({"message": "Record inserted successfully","delivery_id":delivery_id[0]}, status=201)
 
+    print(serializer.errors)
     return Response(serializer.errors, status=400)
 
 @api_view(['PUT'])

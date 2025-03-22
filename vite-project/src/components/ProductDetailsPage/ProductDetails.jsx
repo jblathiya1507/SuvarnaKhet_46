@@ -49,10 +49,19 @@ export default function ProductDetails() {
       if(response.data.success){
         Swal.fire({
           title: "Add to Cart!",
-          text: `${products.p_name} add to cart successfully!`,
+          text: response.data.msg,
           icon: "success",
           confirmButtonColor: "#6A0DAD",
-        });
+        }).then(()=>{
+          navigate("/product");
+        })
+      }else{
+        Swal.fire({
+          title: "Error!",
+          text: response.data.msg,
+          icon: "error",
+          confirmButtonColor: "#FF4500",
+        })
       }
       console.log("Add cart:",response);
     }

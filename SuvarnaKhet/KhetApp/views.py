@@ -202,9 +202,9 @@ def add_to_cart(request):
     
     if cart_data == []:
         cart_payload = {
-            'uf_id': uf_id,
-            'p_id': p_id,
-            'qty': 1,
+            'uf_id': int(uf_id),
+            'p_id': int(p_id),
+            'qty': quantity,
             'status': 1,
             'create_datetime': datetime.now().isoformat()
         }
@@ -221,9 +221,79 @@ def add_to_cart(request):
         else:
             return JsonResponse({"success":False,"msg":"Not able to add into cart! Try again later!"})
     else:
-        qty = int(cart_data[0].qty) + int(quantity)
+        qty = int(cart_data[0]['qty']) + int(quantity)
+        cart_id = cart_data[0]['cart_id']
         
-        response = requests.get(f"{glob_url}/api/cart_update/?uf_id={uf_id}&p_id={p_id}&status=1",{"qty":qty})
+        response = requests.put(f"{glob_url}/api/cart_update/?cart_id={cart_id}",{"qty":qty})
         print(f"Update:{response}")
         
         return JsonResponse({"success":True,"msg":"Add to cart successfully!"})
+    
+@csrf_exempt
+def checkout(request):
+    payment_id = request.GET.get('payment_id')
+    signature = request.GET.get('signature')
+    uf_id = request.GET.get('uf_id')
+    amount = request.GET.get('amount')
+    address = request.GET.get('address')
+    city = request.GET.get('city')
+    state = request.GET.get('state')
+    zipcode = request.GET.get('zipcode')
+    
+    address = f"{address}, {city}, {state}, {zipcode}"
+    
+    print(f"Payment:{payment_id}, UF id:{uf_id}")
+    
+    response = requests.get(f"{glob_url}/api/cart_get/",{"uf_id":uf_id,"status":1})
+    if response.status_code == 200:
+        cart_data = response.json()
+    print(cart_data)
+    
+    for cart in cart_data:
+        order_payload = {
+            'cart_id': cart['cart_id'],
+            'p_id': cart['p_id'],
+            'uf_id':uf_id,
+            'payment_id': payment_id,
+            'payment_amount': amount,
+            'payment_type': payment_id,
+            'status': 1,
+            'create_datetime': datetime.now().isoformat()
+        }
+
+        # Make POST request using `json` parameter
+        order_response = requests.post(
+            f"{glob_url}/api/orders_post/", 
+            json=order_payload,
+            headers={'Content-Type': 'application/json'}
+        )
+        
+        if order_response.status_code == 201:
+            print(order_response.json())
+            order_id = order_response.json()['order_id']
+            print(f"Order Created. {cart['cart_id']}{cart['p_id']}")
+            
+        delivery_payload = {
+            'order_id': order_id,
+            'mt_id': 1,
+            'pick_address': "Warehouse",
+            'delivery_address': address,
+            'verification_qr': "qr.jpg",
+            'status': 1,
+            'create_datetime': datetime.now().isoformat()
+        }
+
+        # Make POST request using `json` parameter
+        delivery_response = requests.post(
+            f"{glob_url}/api/delivery_post/", 
+            json=delivery_payload,
+            headers={'Content-Type': 'application/json'}
+        )
+        
+        if delivery_response.status_code == 201:
+            print(f"Delivery Created. {order_id}")
+            
+        response = requests.put(f"{glob_url}/api/cart_update/?cart_id={cart['cart_id']}",{"status":2})
+        print(f"Update:{response}")
+            
+    return JsonResponse({"success":True,"msg":"Order Successfully!"})

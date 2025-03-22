@@ -9,4 +9,5 @@ urlpatterns = [
     path('verify_otp_py', verify_otp, name="verify_otp_py"),
     path('send_ai_res', send_chatboat_response, name="send_ai_res"),
     path('add_cart_py', add_to_cart, name="add_cart_py"),
+    path('checkout_py', checkout, name="checkout_py"),
 ]

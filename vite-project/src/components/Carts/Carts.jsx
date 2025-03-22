@@ -13,37 +13,62 @@ import {
   Divider,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Cart() {
-  const [cart, setCart] = useState([]);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
+  const uf_id = localStorage.getItem("uf_id");
 
-  useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-    setCart(storedCart);
-  }, []);
+  const [carts, setCarts] = useState([]);
+  const [products, setProducts] = useState([]);
 
-  const handleQuantityChange = (id, newQuantity) => {
-    const updatedCart = cart.map((item) =>
-      item.id === id ? { ...item, quantity: newQuantity } : item
-    );
-    setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
+  useEffect(()=>{
+    const fetchData = async () => {
+      const cart_response = await axios.get(`http://127.0.0.1:8000/api/cart_get/`,{params:{"status":1,"uf_id":uf_id}});
+      console.log(cart_response.data);
+      setCarts(cart_response.data);
+
+      const product_response = await axios.get(`http://127.0.0.1:8000/api/products_get/`);
+      console.log(product_response.data);
+      setProducts(product_response.data);
+    }
+    fetchData();
+  },[]);
+
+  const handleRemoveItem = async (id) => {
+    const delete_response = await axios.put(`http://127.0.0.1:8000/api/cart_update/?cart_id=${id}`,{"status":3});
+    console.log(delete_response.data);
+
+    const cart_response = await axios.get(`http://127.0.0.1:8000/api/cart_get/`,{params:{"status":1,"uf_id":uf_id}});
+    console.log(cart_response.data);
+    setCarts(cart_response.data);
+  };  
+
+  const getTotalPrices = () => {
+    // Calculate the subtotal
+    const subtotal = carts.reduce((total, item) => {
+      const product = products.find((product) => product.p_id === item.p_id);
+      if (product) {
+        total += product.p_price * item.qty;
+      }
+      return total;
+    }, 0);
+    
+    return subtotal;
   };
 
-  const handleRemoveItem = (id) => {
-    const updatedCart = cart.filter((item) => item.id !== id);
-    setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-  };
+  const shippingFee = 50;
+  const totalAmount = getTotalPrices() + shippingFee;
 
-  const getTotalPrice = () => {
-    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
-  };
+  console.log("Total price:",getTotalPrices())
 
-  const shippingFee = 100;
-  const totalAmount = getTotalPrice() + shippingFee;
+  const handleCheckout = () => {
+    localStorage.setItem("subtotal",getTotalPrices());
+    localStorage.setItem("shipping",shippingFee);
+    localStorage.setItem("totalAmount",totalAmount);
+    navigate("/checkout")
+  }
 
   return (
     <Container sx={{ py: 5 }}>
@@ -51,27 +76,28 @@ export default function Cart() {
         Shopping Cart
       </Typography>
 
-      {cart.length === 0 ? (
+      {carts.length === 0 ? (
         <Typography variant="body1">Your cart is empty.</Typography>
       ) : (
         <Grid container spacing={3}>
           <Grid item xs={12} md={8}>
-            {cart.map((item) => (
+            {carts.map((item) => (
+              
               <Card key={item.id} sx={{ display: "flex", alignItems: "center", p: 2, mb: 2 }}>
                 <CardMedia
                   component="img"
-                  image={item.image}
-                  alt={item.name}
+                  image={products.find(product => product.p_id === item.p_id)?.p_image || "N/A"}
+                  alt={products.find(product => product.p_id === item.p_id)?.p_name || "N/A"}
                   sx={{ width: 100, height: 100, borderRadius: 2 }}
                 />
                 <CardContent sx={{ flex: 1 }}>
-                  <Typography variant="h6" fontWeight="bold">{item.name}</Typography>
-                  <Typography variant="body2">Price: ₹{item.price} / Kg</Typography>
+                  <Typography variant="h6" fontWeight="bold">{products.find(product => product.p_id === item.p_id)?.p_name || "N/A"}</Typography>
+                  <Typography variant="body2">Price: ₹{products.find(product => product.p_id === item.p_id)?.p_price || "N/A"} / Kg</Typography>
                   <Box display="flex" alignItems="center" sx={{ mt: 1 }}>
                     <Typography variant="body2" sx={{ mr: 1 }}>Qty:</Typography>
                     <TextField
                       type="number"
-                      value={item.quantity}
+                      value={item.qty}
                       onChange={(e) => handleQuantityChange(item.id, Number(e.target.value))}
                       inputProps={{ min: 1 }}
                       size="small"
@@ -79,7 +105,7 @@ export default function Cart() {
                     />
                   </Box>
                 </CardContent>
-                <IconButton color="error" onClick={() => handleRemoveItem(item.id)}>
+                <IconButton color="error" onClick={() => handleRemoveItem(item.cart_id)}>
                   <DeleteIcon />
                 </IconButton>
               </Card>
@@ -102,7 +128,7 @@ export default function Cart() {
 
               <Box display="flex" justifyContent="space-between" sx={{ mb: 1 }}>
                 <Typography variant="body1">Subtotal</Typography>
-                <Typography variant="body1">₹{getTotalPrice().toFixed(2)}</Typography>
+                <Typography variant="body1">₹{getTotalPrices().toFixed(2)}</Typography>
               </Box>
               <Box display="flex" justifyContent="space-between" sx={{ mb: 2 }}>
                 <Typography variant="body1">Shipping Fee</Typography>
@@ -117,7 +143,7 @@ export default function Cart() {
               {/* Checkout Button */}
               <Button
                 variant="contained"
-                onClick={() => navigate("/checkout")} // Redirect to Checkout Page
+                onClick={() => handleCheckout()} // Redirect to Checkout Page
                 sx={{
                   backgroundColor: "#000",
                   color: "#fff",

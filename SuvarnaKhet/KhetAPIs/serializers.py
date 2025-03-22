@@ -93,7 +93,7 @@ class Delivery(serializers.Serializer):
     mt_id = serializers.IntegerField()
     order_id = serializers.IntegerField()
     pick_address = serializers.CharField()
-    deliver_address =  serializers.CharField()
+    delivery_address =  serializers.CharField()
     verification_qr = serializers.CharField()
     status = serializers.IntegerField()
     create_datetime = serializers.DateTimeField()
