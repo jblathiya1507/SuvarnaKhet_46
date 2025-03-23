@@ -4,6 +4,7 @@ import LatestProducts from "./LatestProducts";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { Navigate, useNavigate } from "react-router-dom";
+// import Chatbox from "./components/ChatBot/ChatBot";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ export default function HomePage() {
         px: 5, // Padding left & right
       }}
     >
+      {/* <Chatbox/> */}
       {/* Overlay for better text readability */}
       <Box
         sx={{

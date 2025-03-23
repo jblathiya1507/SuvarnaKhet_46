@@ -25,6 +25,11 @@ import ManageSellRequests from "./components/Admin/sidemenus/ManageSellRequests"
 import ProfileApproval from "./components/Admin/sidemenus/ProfileApproval";
 import DeliveryPartnerApprove from "./components/Admin/sidemenus/DeliveryPartnerApprove";
 
+import ManageFarmers from "./components/SuperAdmin/ManageFarmers/ManageFarmers";
+import ManageAdmin from "./components/SuperAdmin/ManageAdmin/ManageAdmin";
+import ManageDelivery from "./components/SuperAdmin/ManageDelivery/ManageDelivery";
+import ManageWarehouses from "./components/SuperAdmin/ManageWherhouse/ManageWarehouse";
+// import Chatbox from "./components/ChatBot/ChatBot";
 
 function App() {
   return (
@@ -41,7 +46,7 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/history" element={<Historyy />} />
-        </Route>
+        </Route> 
 
         <Route path="/farmer/signup" element={<FSignup />} />
         <Route path="/farmer/login" element={<FLogin />} />
@@ -55,6 +60,11 @@ function App() {
         <Route path="/admin/managesellrequests" element={<ManageSellRequests />} />
         <Route path="/admin/profileapproval" element={<ProfileApproval />} />  
         <Route path="/admin/deliverypartnerapproval" element={<DeliveryPartnerApprove />} />  
+
+        <Route path="superadmin/managefarmers" element={<ManageFarmers />} />
+        <Route path="superadmin/manageadmin" element={<ManageAdmin />} />
+        <Route path="superadmin/managedelivery" element={<ManageDelivery />} />
+        <Route path="superadmin/managewarehouses" element={<ManageWarehouses />} />
       </Routes>
     </Router>
   );
