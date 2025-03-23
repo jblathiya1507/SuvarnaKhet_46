@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogContent } from "@mui/material";
+import Sidebar from "../Sidebar/Sidebar";
 
 const ManageDelivery = () => {
   const [deliveries, setDeliveries] = useState([
@@ -68,6 +69,7 @@ const ManageDelivery = () => {
         component={Paper} 
         sx={{ width: "100%", boxShadow: "0px 4px 8px rgba(0,0,0,0.1)",maxHeight: "495px"}}
       >
+        <Sidebar/>
         <Table sx={{ width: "100%", tableLayout: "auto" }}>
           <TableHead sx={{ backgroundColor: "#316731",position: "sticky", top: 0, zIndex: 1 }}>
             <TableRow>

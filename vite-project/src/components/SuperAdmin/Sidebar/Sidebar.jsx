@@ -15,10 +15,10 @@ const Sidebar = () => {
   // Sidebar menu items
   const items = [
      
-    { label: "Manage Admin", icon: "pi pi-users", route: "/manageadmin" },
-    { label: "Manage Delivery", icon: "pi pi-truck", route: "/managedelivery" },
-    { label: "Manage Farmers", icon: "pi pi-briefcase", route: "/managefarmers" },
-    { label: "Manage Warehouse", icon: "pi pi-building", route: "/managewarehouses" },
+    { label: "Manage Admin", icon: "pi pi-users", route: "/superadmin/" },
+    { label: "Manage Delivery", icon: "pi pi-truck", route: "/superadmin/managedelivery" },
+    { label: "Manage Farmers", icon: "pi pi-briefcase", route: "/superadmin/managefarmers" },
+    { label: "Manage Warehouse", icon: "pi pi-building", route: "/superadmin/managewarehouses" },
   ];
 
   const handleLogout = () => {
@@ -44,7 +44,14 @@ const Sidebar = () => {
     <div className={`sidebar ${isSidebarCollapsed ? "collapsed" : ""}`}>
       {/* Sidebar header */}
       <div className="sidebar-header">
-        {!isSidebarCollapsed && <h2 className="sidebar-title">LOGO</h2>}
+      {!isSidebarCollapsed && (
+           <img
+          src="/Logos.png" // Replace with your actual logo path
+          alt="Logo"
+          className="sidebar-logo"
+          style={{ width: '140px', height: '140px' }} // Adjust the size as needed
+        />
+        )}
         <Button
           icon={
             isSidebarCollapsed

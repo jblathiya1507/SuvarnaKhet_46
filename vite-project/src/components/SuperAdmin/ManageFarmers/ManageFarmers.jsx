@@ -9,6 +9,7 @@ import {
   Paper,
   Button,
 } from "@mui/material";
+import Sidebar from "../Sidebar/Sidebar";
 
 const ManageFarmers = () => {
   const [farmers, setFarmers] = useState([
@@ -92,6 +93,7 @@ const ManageFarmers = () => {
           maxHeight: "495px", // Fixed height for the scrollable container
         }}
       >
+        <Sidebar/>
         <Table sx={{ width: "100%", tableLayout: "auto" }}>
           <TableHead
             sx={{

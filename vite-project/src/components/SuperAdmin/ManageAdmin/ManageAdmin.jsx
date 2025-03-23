@@ -9,6 +9,7 @@ import {
   Paper,
   Button,
 } from "@mui/material";
+import Sidebar from "../Sidebar/Sidebar";
 
 const ManageAdmin = () => {
   const [farmers, setFarmers] = useState([
@@ -102,6 +103,7 @@ const ManageAdmin = () => {
           maxHeight: "495px",
         }}
       >
+        <Sidebar/>
         <Table sx={{ width: "100%", tableLayout: "auto" }}>
           <TableHead
             sx={{

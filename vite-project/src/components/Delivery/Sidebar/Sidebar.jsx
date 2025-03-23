@@ -14,15 +14,13 @@ const Sidebar = () => {
 
   // Sidebar menu items
   const items = [
-    { label: "Dashboard", icon: "pi pi-home", route: "/farmer/dashboard" },
-    { label: "Profile", icon: "pi pi-user", route: "/farmer/profile" },
     {
-      label: "Sell Requests",
-      icon: "pi pi-shopping-cart",
-      route: "/farmer/sellrequests",
-    },
-    { label: "ManageSelling", icon: "pi pi-user", route: "/farmer/manageselling" },
-
+      label: "Manage Pickup",
+      icon: "pi pi-map-marker",
+      route: "/delivery/managepickup",
+    }, // New "Manage Pickup" item
+    { label: "Manage Delivery", icon: "pi pi-truck", route: "/delivery/managedelivery" }, // New "Manage Delivery" item
+    { label: "Profile", icon: "pi pi-user", route: "/delivery/profile" }, // New "Profile" item
   ];
 
   const handleLogout = () => {
@@ -36,11 +34,9 @@ const Sidebar = () => {
       confirmButtonText: "Yes, log me out!",
     }).then((result) => {
       if (result.isConfirmed) {
-        localStorage.removeItem("uf_id");
-        // Perform logout action (e.g., clear session, token, etc.)
         Swal.fire("Logged out!", "You have been logged out.", "success");
-        // Redirect to login or home page after logout (optional)
-        navigate("/farmer/"); // Replace with your desired route
+
+        navigate("/delivery/login");
       }
     });
   };
@@ -49,7 +45,7 @@ const Sidebar = () => {
     <div className={`sidebar ${isSidebarCollapsed ? "collapsed" : ""}`}>
       {/* Sidebar header */}
       <div className="sidebar-header">
-      {!isSidebarCollapsed && (
+        {!isSidebarCollapsed && (
            <img
           src="/Logos.png" // Replace with your actual logo path
           alt="Logo"
@@ -74,7 +70,9 @@ const Sidebar = () => {
         {items.map((item) => (
           <li
             key={item.route}
-            className={`menu-item ${currentPath === item.route ? "active-menu" : ""}`}
+            className={`menu-item ${
+              currentPath === item.route ? "active-menu" : ""
+            }`}
             onClick={() => navigate(item.route)}
           >
             <div className="menu-icon">
@@ -207,6 +205,7 @@ const styles = `
   }
 
   .logout-button {
+  border:2px solid white;
     width: 100%;
     background: transparent;
     color: white;

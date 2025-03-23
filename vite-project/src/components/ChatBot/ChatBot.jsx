@@ -13,6 +13,7 @@ import SendIcon from "@mui/icons-material/Send";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle"; // User Icon
 import SmartToyIcon from "@mui/icons-material/SmartToy"; // AI Icon
 import MicIcon from "@mui/icons-material/Mic"; // Mic Icon 🎤
+import axios from "axios";
 
 const Chatbox = () => {
   const [visible, setVisible] = useState(false); // Chat window visibility state
@@ -33,8 +34,12 @@ const Chatbox = () => {
     setMessages((prev) => [...prev, { text: input, sender: "user" }]);
     setInput("");
 
-    const aiResponse = await fetchAIResponse(input);
-    setMessages((prev) => [...prev, { text: aiResponse, sender: "bot" }]);
+    // const aiResponse = await fetchAIResponse(input);
+    // setMessages((prev) => [...prev, { text: aiResponse, sender: "bot" }]);
+
+    const aiRes = await axios.get(`http://127.0.0.1:8000/send_ai_res`,{params:{"user_text":input}});
+    console.log("AI:",aiRes.data.ai_text);
+    setMessages((prev) => [...prev, { text: aiRes.data.ai_text, sender: "bot" }]);
 
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };

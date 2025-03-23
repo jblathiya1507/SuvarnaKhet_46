@@ -55,15 +55,15 @@ export default function Navbar() {
         
         {/* Left Section: Logo */}
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          {/* <Box
+          <Box
             component="img"
-            src="/logo.png"  // Replace with your logo path
+            src="/Logos.png"  // Replace with your logo path
             alt="Logo"
-            sx={{ height: 40, mr: 2 }} // Adjust size & margin
-          /> */}
-          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            sx={{ height: 70, mr: 2 }} // Adjust size & margin
+          />
+          {/* <Typography variant="h6" sx={{ fontWeight: "bold" }}>
             LOGO
-          </Typography>
+          </Typography> */}
         </Box>
 
         {/* Center Section: Navigation Links */}

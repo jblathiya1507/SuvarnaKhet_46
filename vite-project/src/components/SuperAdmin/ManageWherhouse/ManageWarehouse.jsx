@@ -9,6 +9,7 @@ import {
   Paper,
   Button,
 } from "@mui/material";
+import Sidebar from "../Sidebar/Sidebar";
 
 const ManageWarehouses = () => {
   const [farmers, setFarmers] = useState([
@@ -56,6 +57,7 @@ const ManageWarehouses = () => {
           overflowY: "auto", // Enable vertical scroll
         }}
       >
+        <Sidebar/>
         <Table sx={{ width: "100%", tableLayout: "auto" }}>
           <TableHead
             sx={{

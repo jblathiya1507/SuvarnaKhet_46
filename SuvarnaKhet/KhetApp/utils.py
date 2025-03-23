@@ -87,9 +87,9 @@ def get_ai_response(knowledge, user_input):
     if not knowledge:
         return JsonResponse({"status": "error", "message": "Sorry, I couldn't retrieve any knowledge to answer your question."}, status=400)
 
-    nlp_data = nlp_process_input(user_input)
-    
-    prompt = f"Based on the following knowledge:\n{knowledge}\nAnswer the question in prescribe with the shortest way possible: if it's a date, or yes/no, provide just that. If a short explanation is necessary, use only one or two lines with no extra details: {user_input}\nEntities: {nlp_data['entities']}\nKeywords: {nlp_data['keywords']} language of question is keep in answer."
+    # nlp_data = nlp_process_input(user_input)
+    print(f"Knowledge: {knowledge}")
+    prompt = f"Based on the following knowledge:\n{knowledge}\n. If a short explanation is necessary, use only one or two lines with no extra details: {user_input} language of question is keep in answer."
     
     try:
         model = genai.GenerativeModel("gemini-1.5-flash")

@@ -29,7 +29,13 @@ import ManageFarmers from "./components/SuperAdmin/ManageFarmers/ManageFarmers";
 import ManageAdmin from "./components/SuperAdmin/ManageAdmin/ManageAdmin";
 import ManageDelivery from "./components/SuperAdmin/ManageDelivery/ManageDelivery";
 import ManageWarehouses from "./components/SuperAdmin/ManageWherhouse/ManageWarehouse";
-// import Chatbox from "./components/ChatBot/ChatBot";
+
+import ManagePickup from "./components/Delivery/ManagePickup/ManagePickup";
+import DManageDelivery from "./components/Delivery/ManageDelivery/ManageDelivery";
+import DProfile from "./components/Delivery/Profile/Profile";
+import DLogin from "./components/Delivery/Auth/Login";
+import DSignup from "./components/Delivery/Auth/Signup";
+
 
 function App() {
   return (
@@ -49,22 +55,28 @@ function App() {
         </Route> 
 
         <Route path="/farmer/signup" element={<FSignup />} />
-        <Route path="/farmer/login" element={<FLogin />} />
+        <Route path="/farmer/" element={<FLogin />} />
         <Route path="/farmer/dashboard" element={<FarmerDashboard />} />
         <Route path="/farmer/sellrequests" element={<SellRequests />} />
         <Route path="/farmer/manageselling" element={<ManageSelling />} />
         <Route path="/farmer/profile" element={<FProfile />} />{" "}
       
-        <Route path="/admin/login" element={<ALogin />} />
+        <Route path="/admin/" element={<ALogin />} />
         <Route path="/admin/dashboard" element={<Dashboard />} />
         <Route path="/admin/managesellrequests" element={<ManageSellRequests />} />
         <Route path="/admin/profileapproval" element={<ProfileApproval />} />  
         <Route path="/admin/deliverypartnerapproval" element={<DeliveryPartnerApprove />} />  
 
-        <Route path="superadmin/managefarmers" element={<ManageFarmers />} />
-        <Route path="superadmin/manageadmin" element={<ManageAdmin />} />
-        <Route path="superadmin/managedelivery" element={<ManageDelivery />} />
-        <Route path="superadmin/managewarehouses" element={<ManageWarehouses />} />
+        <Route path="/superadmin/managefarmers" element={<ManageFarmers />} />
+        <Route path="/superadmin/" element={<ManageAdmin />} />
+        <Route path="/superadmin/managedelivery" element={<ManageDelivery />} />
+        <Route path="/superadmin/managewarehouses" element={<ManageWarehouses />} />
+
+        <Route path="/delivery/signup" element={<DSignup />} />
+        <Route path="/delivery/" element={<DLogin />} />
+        <Route path="/delivery/managepickup" element={<ManagePickup />} />
+        <Route path="/delivery/managedelivery" element={<DManageDelivery />} />
+        <Route path="/delivery/profile" element={<DProfile />} />
       </Routes>
     </Router>
   );

@@ -20,8 +20,8 @@ const Login = () => {
   });
 
   const validCredentials = {
-    username: "superadmin",
-    password: "Superadmin@123",
+    username: "delivery",
+    password: "Delivery@123",
   };
 
   const handleChange = (e) => {
@@ -40,7 +40,7 @@ const Login = () => {
         text: "Welcome back!",
         confirmButtonColor: "#7BAE4C",
       }).then(()=>{
-        navigate("/admin/dashboard");
+        navigate("/delivery/managepickup");
       })
     } else {
       Swal.fire({
