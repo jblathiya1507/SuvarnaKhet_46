@@ -23,7 +23,7 @@ const Signup = () => {
     mobile: "",
     gender: "",
     dob: "",
-    role: 4,
+    role:3,
   });
 
   // Handle input change
@@ -36,7 +36,7 @@ const Signup = () => {
   const handleSubmit = async (e) => {
 
     if(formData.fullName && formData.mobile && formData.mobile && formData.gender && formData.dob){
-      const response = await axios.get(`http://127.0.0.1:8000/registration_py`, {params:{name:formData.fullName,mobile:formData.mobile,gender:formData.gender,dob:formData.dob}});
+      const response = await axios.get(`http://127.0.0.1:8000/registration_py`, {params:{name:formData.fullName,mobile:formData.mobile,gender:formData.gender,dob:formData.dob,role:formData.role}});
       if (response.data.success) {
         Swal.fire({
           title: "Registration Successful!",
@@ -44,7 +44,7 @@ const Signup = () => {
           icon: "success",
           confirmButtonColor: "#6A0DAD",
         }).then(() => {
-          navigate("/login");
+          navigate("/farmer/login");
         });
       }else{
         Swal.fire({
@@ -73,7 +73,7 @@ const Signup = () => {
       display="flex"
       justifyContent="center"
       alignItems="center"
-      height="90vh"
+      height="100vh"
       sx={{ backgroundColor: "#A4C96F" }}
     >
       <Card
@@ -94,7 +94,7 @@ const Signup = () => {
             textAlign="center"
             mb={1}
           >
-            Create an Account
+            Create a Farmer Account
           </Typography>
           <Typography variant="body2" color="#d1e7d3" textAlign="center" mb={3}>
             Sign up
@@ -200,7 +200,7 @@ const Signup = () => {
             <Typography textAlign="center" mt={2} color="white">
               Have an account?{" "}
               <Link
-                to="/login"
+                to="/farmer/login"
                 style={{ color: "#A4C96F", fontWeight: "bold" }}
               >
                 Sign In

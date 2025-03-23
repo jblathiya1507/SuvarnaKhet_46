@@ -36,10 +36,11 @@ const Sidebar = () => {
       confirmButtonText: "Yes, log me out!",
     }).then((result) => {
       if (result.isConfirmed) {
+        localStorage.removeItem("uf_id");
         // Perform logout action (e.g., clear session, token, etc.)
         Swal.fire("Logged out!", "You have been logged out.", "success");
         // Redirect to login or home page after logout (optional)
-        navigate("/login"); // Replace with your desired route
+        navigate("/farmer/login"); // Replace with your desired route
       }
     });
   };

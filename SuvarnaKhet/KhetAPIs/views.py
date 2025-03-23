@@ -50,12 +50,13 @@ def users_farmers_post(request):
         data = serializer.validated_data
         
         query = """
-            INSERT INTO UsersFarmers (uf_name, uf_email, uf_mobile, uf_gender, uf_dob, uf_address, uf_city, uf_state, uf_pincode, status, create_datetime)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING uf_id
+            INSERT INTO UsersFarmers (uf_role_id, uf_name, uf_email, uf_mobile, uf_gender, uf_dob, uf_address, uf_city, uf_state, uf_pincode, status, create_datetime)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING uf_id
         """
 
         with connection.cursor() as cursor:
             cursor.execute(query, [
+                data['uf_role_id'],
                 data['uf_name'],
                 data['uf_email'],
                 data['uf_mobile'],
@@ -129,7 +130,7 @@ def farm_get(request):
     filters = request.query_params.dict()
 
     query = """
-        SELECT uf_id,farm_id, fm_address, fm_city, fm_state, fm_pincode, fm_certificate, fm_area, status,
+        SELECT uf_id, farm_id, fm_address, fm_city, fm_state, fm_pincode, fm_certificate, fm_area, status
         FROM Farm 
     """
 
@@ -144,16 +145,16 @@ def farm_get(request):
         rows = cursor.fetchall()
 
     data = [
-        {   "uf_id" :  row[0],
-            "farm_id" : row[1],
-            "uf_name": row[2],
-            "fm_address": row[3],
-            "fm_city": row[4],
-            "fm_state": row[5],
-            "fm_pincode": row[6],
-            "fm_certificate": row[7],
-            "fm_area": row[8],
-            "uf_state": row[9],
+        {   
+            "uf_id" :  row[0],
+            "farm_id": row[1],
+            "fm_address": row[2],
+            "fm_city": row[3],
+            "fm_state": row[4],
+            "fm_pincode": row[5],
+            "fm_certificate": row[6],
+            "fm_area": row[7],
+            "status": row[8],
         }
         for row in rows
     ]

@@ -11,11 +11,15 @@ import Cart from "./components/Carts/Carts";
 import Product from "./components/Product/Product"
 import Checkout from "./components/CheckOut/CheckOut";
 import Historyy from "./components/Historyy/Historyy";
+
+import FLogin from "./components/Farmer/FarmerAuth/Login";
+import FSignup from "./components/Farmer/FarmerAuth/Signup";
 import SellRequests from "./components/Farmer/SellRequests/SellRequests";
 import ManageSelling from "./components/Farmer/ManageSelling/ManageSelling";
 import FProfile from "./components/Farmer/Profile/Profile"; // Import Profile Page
 import FarmerDashboard from "./components/Farmer/Dashboard/FarmerDashboard";
 
+import ALogin from "./components/Admin/login/Login";
 import Dashboard from "./components/Admin/sidemenus/Dashboard";
 import ManageSellRequests from "./components/Admin/sidemenus/ManageSellRequests";
 import ProfileApproval from "./components/Admin/sidemenus/ProfileApproval";
@@ -39,11 +43,14 @@ function App() {
           <Route path="/history" element={<Historyy />} />
         </Route>
 
+        <Route path="/farmer/signup" element={<FSignup />} />
+        <Route path="/farmer/login" element={<FLogin />} />
         <Route path="/farmer/dashboard" element={<FarmerDashboard />} />
         <Route path="/farmer/sellrequests" element={<SellRequests />} />
         <Route path="/farmer/manageselling" element={<ManageSelling />} />
         <Route path="/farmer/profile" element={<FProfile />} />{" "}
       
+        <Route path="/admin/login" element={<ALogin />} />
         <Route path="/admin/dashboard" element={<Dashboard />} />
         <Route path="/admin/managesellrequests" element={<ManageSellRequests />} />
         <Route path="/admin/profileapproval" element={<ProfileApproval />} />  

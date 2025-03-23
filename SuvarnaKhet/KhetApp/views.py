@@ -48,6 +48,7 @@ def registration(request):
     mobile = request.GET.get("mobile")
     gender = request.GET.get("gender")
     dob = request.GET.get("dob")
+    role = request.GET.get("role")
     
     print(f"name: {name}, mobile: {mobile}, gender: {gender}, dob: {dob}")
     
@@ -62,7 +63,7 @@ def registration(request):
         
         # Insert data in table by calling API
         register_payload = {
-            'uf_role_id': 4,
+            'uf_role_id': int(role),
             'uf_name': name,
             'uf_email': "N/A",
             'uf_mobile': mobile,

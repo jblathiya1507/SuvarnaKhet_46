@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -18,14 +18,32 @@ import {
 import Swal from "sweetalert2";
 import DownloadIcon from "@mui/icons-material/Download"; // ✅ Import Download Icon
 import Sidebar from "../sidebar/Sidebar";
+import axios from "axios";
 
 const ProfileApproval = () => {
-  const [farmers, setFarmers] = useState([
-    { id: 2, name: "Sita Devi", contact: "456789"},
-    { id: 1, name: "Ramesh Kumar", contact: "456789"},
-    { id: 3, name: "Rahul Sharma", contact: "456789"},
-    { id: 4, name: "Amit Singh", contact: "456789" },
-  ]);
+  // const [farmers, setFarmers] = useState([
+  //   { id: 2, name: "Sita Devi", contact: "456789"},
+  //   { id: 1, name: "Ramesh Kumar", contact: "456789"},
+  //   { id: 3, name: "Rahul Sharma", contact: "456789"},
+  //   { id: 4, name: "Amit Singh", contact: "456789" },
+  // ]);
+
+  const[farmers, setFarmers] = useState([]);
+  const[farms, setFarms] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const req_response = await axios.get(
+        `http://127.0.0.1:8000/api/users_farmers_get/`,{params:{"uf_role_id":3,"status":2}}
+      );
+      console.log(req_response.data);
+      setFarmers(req_response.data);
+      const response = await axios.get(`http://127.0.0.1:8000/api/farm_get/`);
+      console.log(response.data);
+      setFarms(response.data[0]);
+    };
+    fetchData();
+  }, []);
 
   const [selectedFarmer, setSelectedFarmer] = useState(null);
   const [open, setOpen] = useState(false);
@@ -44,8 +62,7 @@ const ProfileApproval = () => {
 
   // Approve or Reject Farmer (Profile modal will close immediately)
   const handleUpdateStatus = (id, newStatus) => {
-    setOpen(false); // ✅ Close modal before showing Swal
-
+    setOpen(false);
     Swal.fire({
       title: `Are you sure you want to ${newStatus} this profile?`,
       text: "This action cannot be undone.",
@@ -54,16 +71,26 @@ const ProfileApproval = () => {
       confirmButtonText: `Yes, ${newStatus}!`,
       cancelButtonText: "Cancel",
       confirmButtonColor: newStatus === "approved" ? "#28a745" : "#dc3545",
-    }).then((result) => {
+    }).then(async(result) => {
       if (result.isConfirmed) {
-        setFarmers((prevFarmers) => prevFarmers.filter((farmer) => farmer.id !== id));
-
-        Swal.fire({
-          title: `Profile ${newStatus}!`,
-          text: `The profile has been successfully ${newStatus}.`,
-          icon: "success",
-          confirmButtonText: "OK",
-        });
+        if(newStatus === "approved"){
+          const f_approve_response = await axios.put(
+            `http://127.0.0.1:8000/api/users_farmers_update/?uf_id=${id}`,
+            { status: 3 }
+          );
+          console.log(f_approve_response.data);
+        }else{
+          const f_approve_response = await axios.put(
+            `http://127.0.0.1:8000/api/users_farmers_update/?uf_id=${id}`,
+            { status: 4 }
+          );
+          console.log(f_approve_response.data);
+        }
+        const req_response = await axios.get(
+          `http://127.0.0.1:8000/api/users_farmers_get/`,{params:{"uf_role_id":3,"status":2}}
+        );
+        console.log(req_response.data);
+        setFarmers(req_response.data);
       }
     });
   };
@@ -95,9 +122,9 @@ const ProfileApproval = () => {
             <TableBody>
               {farmers.map((farmer) => (
                 <TableRow key={farmer.id} hover>
-                  <TableCell align="center">{farmer.id}</TableCell>
-                  <TableCell align="center">{farmer.name}</TableCell>
-                  <TableCell align="center">{farmer.contact}</TableCell>
+                  <TableCell align="center">{farmer.uf_id}</TableCell>
+                  <TableCell align="center">{farmer.uf_name}</TableCell>
+                  <TableCell align="center">{farmer.uf_mobile}</TableCell>
                   <TableCell align="center">
                     <Button variant="contained" color="success" size="small" onClick={() => handleOpenProfile(farmer)} sx={{ marginRight: 1 }}>
                       View Profile
@@ -115,12 +142,11 @@ const ProfileApproval = () => {
           <DialogContent>
             {selectedFarmer && (
               <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                <Typography><b>Name:</b> {selectedFarmer.name}</Typography>
-                <Typography><b>Farm Address:</b> {selectedFarmer.farmAddress}</Typography>
-                <Typography><b>City:</b> {selectedFarmer.city}</Typography>
-                <Typography><b>State:</b> {selectedFarmer.state}</Typography>
-                <Typography><b>Pincode:</b> {selectedFarmer.pincode}</Typography>
-                <Typography><b>Farm Area:</b> {selectedFarmer.farmArea}</Typography>
+                <Typography><b>Name:</b> {selectedFarmer.uf_name}</Typography>
+                <Typography><b>Farm Address:</b> {selectedFarmer.uf_address}</Typography>
+                <Typography><b>City:</b> {selectedFarmer.uf_city}</Typography>
+                <Typography><b>State:</b> {selectedFarmer.uf_state}</Typography>
+                <Typography><b>Pincode:</b> {selectedFarmer.uf_pincode}</Typography>
 
                 {/* Download Certificate Button with Icon */}
                 <Button
@@ -139,10 +165,10 @@ const ProfileApproval = () => {
             <Button onClick={handleClose} variant="outlined" color="error">
               Close
             </Button>
-            <Button onClick={() => handleUpdateStatus(selectedFarmer.id, "approved")} variant="contained" color="success">
+            <Button onClick={() => handleUpdateStatus(selectedFarmer.uf_id, "approved")} variant="contained" color="success">
               Approve
             </Button>
-            <Button onClick={() => handleUpdateStatus(selectedFarmer.id, "rejected")} variant="contained" color="error">
+            <Button onClick={() => handleUpdateStatus(selectedFarmer.uf_id, "rejected")} variant="contained" color="error">
               Reject
             </Button>
           </DialogActions>

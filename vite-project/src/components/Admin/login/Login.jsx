@@ -10,8 +10,10 @@ import {
 } from "@mui/material";
 import { Person, Lock } from "@mui/icons-material";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -37,7 +39,9 @@ const Login = () => {
         title: "Login Successful!",
         text: "Welcome back!",
         confirmButtonColor: "#7BAE4C",
-      });
+      }).then(()=>{
+        navigate("/admin/dashboard");
+      })
     } else {
       Swal.fire({
         icon: "error",
